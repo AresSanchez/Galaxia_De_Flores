@@ -911,36 +911,7 @@ function aplicarTransformacion() {
     ctx.scale(zoom, zoom);
 }
 
-/*
-    Acercar o alejar desde un punto específico.
-*/
-
-function zoomEn(pantallaX, pantallaY, factor) {
-
-    const zoomAnterior = zoom;
-
-    const nuevoZoom = Math.max(
-        MIN_ZOOM,
-        Math.min(MAX_ZOOM, zoom * factor)
-    );
-
-    if (nuevoZoom === zoom) return;
-
-    /*
-        Mantiene el punto bajo el cursor
-        en la misma posición mientras se acerca.
-    */
-
-    const mundoX = (pantallaX - CX - offsetX) / zoomAnterior;
-    const mundoY = (pantallaY - CY - offsetY) / zoomAnterior;
-
-    zoom = nuevoZoom;
-
-    offsetX = pantallaX - CX - mundoX * zoom;
-    offsetY = pantallaY - CY - mundoY * zoom;
-
-    actualizarTextoZoom();
-}
+/* El zoom para mouse y teléfono se define más abajo en hacerZoomEn(). */
 
 /* =====================================================
    BOTONES DE ZOOM
@@ -1086,8 +1057,6 @@ function hacerZoomEn(pantallaX, pantallaY, factor) {
     actualizarTextoZoom();
 }
 
-/* Alias para no romper el código original. */
-const zoomEn = hacerZoomEn;
 
 function ocultarIndicacion() {
     const ayuda =
@@ -1111,7 +1080,7 @@ canvas.addEventListener("wheel", event => {
 
     const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12;
 
-    zoomEn(event.clientX, event.clientY, factor);
+    hacerZoomEn(event.clientX, event.clientY, factor);
 
 }, { passive: false });
 
