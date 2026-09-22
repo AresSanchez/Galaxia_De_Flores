@@ -1,0 +1,1466 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Galaxia de Flores Amarillas</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #020108;
+    font-family: Georgia, serif;
+    touch-action: none;
+    overscroll-behavior: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    display: block;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+canvas:active {
+    cursor: grabbing;
+}
+
+/* TÍTULO */
+
+.titulo {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 18px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+
+    text-align: center;
+    width: 90%;
+
+    pointer-events: none;
+
+    color: #fff1a0;
+
+    text-shadow:
+        0 0 10px #ffd83d,
+        0 0 30px rgba(255, 200, 20, 0.65);
+}
+
+.titulo h1 {
+    font-size: clamp(22px, 4vw, 48px);
+    font-weight: normal;
+    letter-spacing: 3px;
+}
+
+.titulo p {
+    margin-top: 8px;
+    font-size: clamp(11px, 1.5vw, 15px);
+    letter-spacing: 2px;
+    color: #ffeaa0;
+    opacity: 0.85;
+}
+
+/* CONTROLES */
+
+.controles {
+    position: fixed;
+    z-index: 20;
+
+    bottom: calc(env(safe-area-inset-bottom) + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 10px;
+
+    border: 1px solid rgba(255, 221, 90, 0.3);
+    border-radius: 50px;
+
+    background: rgba(12, 8, 28, 0.76);
+    backdrop-filter: blur(15px);
+
+    box-shadow: 0 0 30px rgba(255, 200, 30, 0.12);
+}
+
+.btn {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+
+    border: 1px solid rgba(255, 225, 100, 0.25);
+    border-radius: 50%;
+
+    background: rgba(255, 215, 50, 0.08);
+
+    color: #ffe77a;
+    font-size: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: 0.18s;
+}
+
+.btn:hover {
+    background: rgba(255, 215, 50, 0.25);
+    box-shadow: 0 0 15px rgba(255, 215, 50, 0.3);
+    transform: scale(1.08);
+}
+
+.btn:active {
+    transform: scale(0.92);
+}
+
+#zoomTexto {
+    min-width: 54px;
+    text-align: center;
+    color: #fff0a0;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+}
+
+.btn-reset {
+    font-size: 18px;
+}
+
+.btn-full {
+    font-size: 18px;
+}
+
+/* INDICACIÓN */
+
+.indicacion {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom) + 92px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    z-index: 10;
+
+    color: rgba(255, 235, 160, 0.65);
+    font: 11px Arial, sans-serif;
+    letter-spacing: 1px;
+    text-align: center;
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+/* MÓVILES */
+
+@media (max-width: 600px) {
+
+    .titulo {
+        top: calc(env(safe-area-inset-top) + 18px);
+        width: 92%;
+    }
+
+    .titulo h1 {
+        font-size: clamp(21px, 7vw, 34px);
+        line-height: 1.08;
+        letter-spacing: 1px;
+    }
+
+    .titulo p {
+        margin-top: 6px;
+        font-size: 10px;
+        line-height: 1.2;
+        letter-spacing: 1.2px;
+    }
+
+    .controles {
+        bottom: calc(env(safe-area-inset-bottom) + 10px);
+        gap: 5px;
+        padding: 7px 8px;
+        max-width: calc(100vw - 20px);
+    }
+
+    .btn {
+        width: 43px;
+        height: 43px;
+        flex-basis: 43px;
+        font-size: 23px;
+    }
+
+    #zoomTexto {
+        min-width: 48px;
+        font-size: 11px;
+    }
+
+    .indicacion {
+        bottom: calc(env(safe-area-inset-bottom) + 78px);
+        width: 90%;
+        font-size: 9px;
+        letter-spacing: .8px;
+        white-space: normal;
+        line-height: 1.35;
+    }
+}
+
+/* Teléfonos muy pequeños */
+@media (max-width: 380px) {
+
+    .titulo h1 {
+        font-size: 21px;
+    }
+
+    .titulo p {
+        font-size: 9px;
+    }
+
+    .controles {
+        gap: 3px;
+        padding: 6px;
+    }
+
+    .btn {
+        width: 39px;
+        height: 39px;
+        flex-basis: 39px;
+        font-size: 20px;
+    }
+
+    #zoomTexto {
+        min-width: 43px;
+        font-size: 10px;
+    }
+}
+
+/* Modo horizontal en teléfono */
+@media (orientation: landscape) and (max-height: 520px) {
+
+    .titulo {
+        top: calc(env(safe-area-inset-top) + 8px);
+    }
+
+    .titulo h1 {
+        font-size: 20px;
+    }
+
+    .titulo p {
+        display: none;
+    }
+
+    .controles {
+        bottom: calc(env(safe-area-inset-bottom) + 6px);
+    }
+
+    .indicacion {
+        bottom: calc(env(safe-area-inset-bottom) + 63px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="galaxia"></canvas>
+
+<div class="titulo">
+    <h1>Galaxia de Flores Amarillas</h1>
+    <p>Un universo infinito de flores 🌼</p>
+</div>
+
+<div class="indicacion">
+    ARRASTRA PARA EXPLORAR · PELLIZCA PARA ACERCAR
+</div>
+
+<div class="controles">
+
+    <button class="btn" id="alejar" title="Alejar">−</button>
+
+    <span id="zoomTexto">100%</span>
+
+    <button class="btn" id="acercar" title="Acercar">+</button>
+
+    <button class="btn btn-reset" id="centrar" title="Centrar galaxia">
+        ⟳
+    </button>
+
+    <button class="btn btn-full" id="pantalla" title="Pantalla completa">
+        ⛶
+    </button>
+
+</div>
+
+<script>
+const canvas = document.getElementById("galaxia");
+const ctx = canvas.getContext("2d");
+
+let W, H, DPR;
+let CX, CY;
+
+/* =====================================================
+   CONFIGURACIÓN DE LA GALAXIA
+===================================================== */
+
+let zoom = 1;
+const MIN_ZOOM = 0.35;
+const MAX_ZOOM = 5;
+
+let offsetX = 0;
+let offsetY = 0;
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+
+let pointers = new Map();
+let lastPinchDistance = 0;
+let lastPinchCenterX = 0;
+let lastPinchCenterY = 0;
+
+let lastTapTime = 0;
+let lastTapX = 0;
+let lastTapY = 0;
+
+const ES_MOBILE =
+    window.matchMedia("(max-width: 600px)").matches;
+
+const AREA_PANTALLA =
+    window.innerWidth * window.innerHeight;
+
+const FLOWER_COUNT =
+    ES_MOBILE
+        ? AREA_PANTALLA < 500000 ? 280 : 380
+        : 650;
+
+const STAR_COUNT =
+    ES_MOBILE
+        ? AREA_PANTALLA < 500000 ? 700 : 850
+        : 1100;
+
+const DUST_COUNT =
+    ES_MOBILE
+        ? AREA_PANTALLA < 500000 ? 1100 : 1500
+        : 2200;
+
+let flowers = [];
+let stars = [];
+let dust = [];
+
+/* =====================================================
+   CANVAS RESPONSIVE
+===================================================== */
+
+function resize() {
+
+    W =
+        window.visualViewport
+            ? window.visualViewport.width
+            : window.innerWidth;
+
+    H =
+        window.visualViewport
+            ? window.visualViewport.height
+            : window.innerHeight;
+
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    CX = W / 2;
+    CY = H / 2;
+}
+
+window.addEventListener(
+    "resize",
+    resize,
+    { passive: true }
+);
+
+if (window.visualViewport) {
+    window.visualViewport.addEventListener(
+        "resize",
+        resize,
+        { passive: true }
+    );
+}
+
+resize();
+
+/* =====================================================
+   GENERADOR ALEATORIO
+===================================================== */
+
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+/* =====================================================
+   ESTRELLAS DEL UNIVERSO
+===================================================== */
+
+function crearEstrellas() {
+
+    stars = [];
+
+    for (let i = 0; i < STAR_COUNT; i++) {
+
+        stars.push({
+            x: Math.random(),
+            y: Math.random(),
+
+            size: random(0.3, 1.8),
+
+            alpha: random(0.2, 1),
+
+            phase: random(0, Math.PI * 2),
+
+            speed: random(0.3, 1.5)
+        });
+    }
+}
+
+crearEstrellas();
+
+/* =====================================================
+   GENERAR FLORES EN BRAZOS ESPIRALES
+===================================================== */
+
+function crearFlores() {
+
+    flowers = [];
+
+    for (let i = 0; i < FLOWER_COUNT; i++) {
+
+        const arm = Math.floor(random(0, 5));
+
+        /*
+            Distribución concentrada en la galaxia,
+            con más flores cerca del centro.
+        */
+
+        const radius =
+            Math.pow(Math.random(), 0.72) * 1.1;
+
+        const armAngle =
+            arm * Math.PI * 2 / 5;
+
+        const spiral =
+            radius * 5.5;
+
+        const angle =
+            armAngle +
+            spiral +
+            random(-0.65, 0.65);
+
+        /*
+            Coordenadas normalizadas:
+            permiten adaptar la galaxia
+            a cualquier pantalla.
+        */
+
+        const distance = radius * 0.9;
+
+        flowers.push({
+
+            x: Math.cos(angle) * distance,
+
+            y: Math.sin(angle) * distance * 0.58,
+
+            radius,
+
+            angle,
+
+            arm,
+
+            size: random(2.5, 8),
+
+            petals: Math.floor(random(7, 11)),
+
+            rotation: random(0, Math.PI * 2),
+
+            rotationSpeed: random(-0.003, 0.003),
+
+            depth: random(0.2, 1),
+
+            alpha: random(0.55, 1),
+
+            phase: random(0, Math.PI * 2),
+
+            color: Math.random()
+        });
+    }
+}
+
+crearFlores();
+
+/* =====================================================
+   POLVO ESTELAR
+===================================================== */
+
+function crearPolvo() {
+
+    dust = [];
+
+    for (let i = 0; i < DUST_COUNT; i++) {
+
+        const arm = Math.floor(random(0, 5));
+
+        const radius = Math.pow(Math.random(), 0.8);
+
+        const angle =
+            arm * Math.PI * 2 / 5 +
+            radius * 5.5 +
+            random(-0.9, 0.9);
+
+        dust.push({
+
+            x: Math.cos(angle) * radius,
+
+            y: Math.sin(angle) * radius * 0.58,
+
+            size: random(0.3, 2.2),
+
+            alpha: random(0.03, 0.32),
+
+            phase: random(0, Math.PI * 2),
+
+            speed: random(0.0001, 0.0005)
+        });
+    }
+}
+
+crearPolvo();
+
+/* =====================================================
+   FONDO ESPACIAL
+===================================================== */
+
+function dibujarFondo() {
+
+    const bg = ctx.createRadialGradient(
+        CX, CY, 0,
+        CX, CY, Math.max(W, H) * 0.85
+    );
+
+    bg.addColorStop(0, "#171020");
+    bg.addColorStop(0.3, "#090712");
+    bg.addColorStop(0.7, "#030208");
+    bg.addColorStop(1, "#000");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    /*
+        Estrellas de fondo independientes del zoom.
+    */
+
+    for (const star of stars) {
+
+        const twinkle =
+            0.65 +
+            Math.sin(performance.now() * 0.001 * star.speed + star.phase) * 0.35;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x * W,
+            star.y * H,
+            star.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(255,255,255,${star.alpha * twinkle})`;
+
+        ctx.fill();
+    }
+}
+
+/* =====================================================
+   NÚCLEO LUMINOSO
+===================================================== */
+
+function dibujarNucleo() {
+
+    const radius = Math.min(W, H) * 0.24;
+
+    const pulse =
+        1 + Math.sin(performance.now() * 0.0007) * 0.035;
+
+    const glow = ctx.createRadialGradient(
+        0, 0, 0,
+        0, 0, radius * pulse
+    );
+
+    glow.addColorStop(0, "rgba(255,255,235,0.95)");
+    glow.addColorStop(0.08, "rgba(255,237,150,0.75)");
+    glow.addColorStop(0.2, "rgba(255,211,65,0.4)");
+    glow.addColorStop(0.48, "rgba(255,180,20,0.12)");
+    glow.addColorStop(1, "rgba(255,160,0,0)");
+
+    ctx.beginPath();
+
+    ctx.arc(0, 0, radius * pulse, 0, Math.PI * 2);
+
+    ctx.fillStyle = glow;
+    ctx.fill();
+
+    /*
+        Centro de luz.
+    */
+
+    const core = ctx.createRadialGradient(
+        0, 0, 0,
+        0, 0, radius * 0.13
+    );
+
+    core.addColorStop(0, "#fffef0");
+    core.addColorStop(0.3, "#fff3ad");
+    core.addColorStop(0.7, "#ffda45");
+    core.addColorStop(1, "rgba(255,195,20,0)");
+
+    ctx.beginPath();
+
+    ctx.arc(0, 0, radius * 0.13, 0, Math.PI * 2);
+
+    ctx.fillStyle = core;
+    ctx.fill();
+}
+
+/* =====================================================
+   DIBUJAR UNA FLOR
+===================================================== */
+
+function dibujarFlor(x, y, size, petals, rotation, alpha, color) {
+
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+
+    /*
+        Resplandor alrededor de cada flor.
+    */
+
+    const glow = ctx.createRadialGradient(
+        0, 0, 0,
+        0, 0, size * 3.5
+    );
+
+    glow.addColorStop(
+        0,
+        `rgba(255,220,50,${0.23 * alpha})`
+    );
+
+    glow.addColorStop(
+        1,
+        "rgba(255,190,0,0)"
+    );
+
+    ctx.beginPath();
+
+    ctx.arc(0, 0, size * 3.5, 0, Math.PI * 2);
+
+    ctx.fillStyle = glow;
+    ctx.fill();
+
+    /*
+        Variación de tonos amarillos.
+    */
+
+    const hue = color > 0.5 ? 48 : 43;
+
+    /*
+        Pétalos.
+    */
+
+    for (let i = 0; i < petals; i++) {
+
+        const angle = i * Math.PI * 2 / petals;
+
+        ctx.save();
+
+        ctx.rotate(angle);
+
+        const petal = ctx.createLinearGradient(
+            0, -size * 0.15,
+            0, -size * 1.2
+        );
+
+        petal.addColorStop(
+            0,
+            `hsla(${hue + 8},100%,78%,${alpha})`
+        );
+
+        petal.addColorStop(
+            0.55,
+            `hsla(${hue},100%,60%,${alpha})`
+        );
+
+        petal.addColorStop(
+            1,
+            `hsla(${hue - 5},95%,43%,${alpha})`
+        );
+
+        ctx.beginPath();
+
+        ctx.moveTo(-size * 0.13, -size * 0.1);
+
+        ctx.bezierCurveTo(
+            -size * 0.55, -size * 0.42,
+            -size * 0.4, -size * 1.08,
+            0, -size * 1.2
+        );
+
+        ctx.bezierCurveTo(
+            size * 0.4, -size * 1.08,
+            size * 0.55, -size * 0.42,
+            size * 0.13, -size * 0.1
+        );
+
+        ctx.closePath();
+
+        ctx.fillStyle = petal;
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    /*
+        Centro de la flor.
+    */
+
+    const center = ctx.createRadialGradient(
+        0, 0, 0,
+        0, 0, size * 0.38
+    );
+
+    center.addColorStop(0, "#fff7b5");
+    center.addColorStop(0.4, "#ffd83b");
+    center.addColorStop(1, "#a96b00");
+
+    ctx.beginPath();
+
+    ctx.arc(0, 0, size * 0.36, 0, Math.PI * 2);
+
+    ctx.fillStyle = center;
+    ctx.fill();
+
+    ctx.restore();
+}
+
+/* =====================================================
+   DIBUJAR POLVO DE LA GALAXIA
+===================================================== */
+
+function dibujarPolvo(time) {
+
+    for (const p of dust) {
+
+        const drift = time * p.speed;
+
+        const px = p.x * Math.min(W, H) * 0.95;
+        const py = p.y * Math.min(W, H) * 0.95;
+
+        const twinkle =
+            0.65 +
+            Math.sin(time * 0.001 + p.phase) * 0.35;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            px + Math.sin(drift + p.phase) * 3,
+            py,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(255,211,94,${p.alpha * twinkle})`;
+
+        ctx.fill();
+    }
+}
+
+/* =====================================================
+   DIBUJAR BRAZOS ESPIRALES
+===================================================== */
+
+function dibujarBrazos() {
+
+    ctx.save();
+
+    ctx.scale(1, 0.58);
+
+    for (let arm = 0; arm < 5; arm++) {
+
+        const base = arm * Math.PI * 2 / 5;
+
+        ctx.beginPath();
+
+        for (let r = 5; r < Math.min(W, H) * 0.52; r += 3) {
+
+            const angle = base + r * 0.012;
+
+            const x = Math.cos(angle) * r;
+            const y = Math.sin(angle) * r;
+
+            if (r === 5) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+
+        ctx.strokeStyle = "rgba(255,208,60,0.035)";
+        ctx.lineWidth = 34;
+        ctx.lineCap = "round";
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+/* =====================================================
+   DIBUJAR TODAS LAS FLORES
+===================================================== */
+
+function dibujarFlores(time) {
+
+    /*
+        Orden por profundidad.
+    */
+
+    const sorted = [...flowers].sort(
+        (a, b) => a.depth - b.depth
+    );
+
+    for (const f of sorted) {
+
+        f.rotation += f.rotationSpeed;
+
+        /*
+            Movimiento orbital lento.
+        */
+
+        const angle =
+            f.angle +
+            time * 0.000025 * (f.depth + 0.2);
+
+        const radius =
+            f.radius * Math.min(W, H) * 0.85;
+
+        const x =
+            Math.cos(angle) * radius;
+
+        const y =
+            Math.sin(angle) * radius * 0.58;
+
+        const size =
+            f.size * (0.45 + f.depth * 0.9);
+
+        const alpha =
+            f.alpha * (0.5 + f.depth * 0.5);
+
+        dibujarFlor(
+            x,
+            y,
+            size,
+            f.petals,
+            f.rotation,
+            alpha,
+            f.color
+        );
+    }
+}
+
+/* =====================================================
+   SISTEMA DE ZOOM Y MOVIMIENTO
+===================================================== */
+
+function aplicarTransformacion() {
+
+    ctx.translate(CX + offsetX, CY + offsetY);
+
+    ctx.scale(zoom, zoom);
+}
+
+/*
+    Acercar o alejar desde un punto específico.
+*/
+
+function zoomEn(pantallaX, pantallaY, factor) {
+
+    const zoomAnterior = zoom;
+
+    const nuevoZoom = Math.max(
+        MIN_ZOOM,
+        Math.min(MAX_ZOOM, zoom * factor)
+    );
+
+    if (nuevoZoom === zoom) return;
+
+    /*
+        Mantiene el punto bajo el cursor
+        en la misma posición mientras se acerca.
+    */
+
+    const mundoX = (pantallaX - CX - offsetX) / zoomAnterior;
+    const mundoY = (pantallaY - CY - offsetY) / zoomAnterior;
+
+    zoom = nuevoZoom;
+
+    offsetX = pantallaX - CX - mundoX * zoom;
+    offsetY = pantallaY - CY - mundoY * zoom;
+
+    actualizarTextoZoom();
+}
+
+/* =====================================================
+   BOTONES DE ZOOM
+===================================================== */
+
+function activarBoton(id, callback) {
+
+    const boton =
+        document.getElementById(id);
+
+    boton.addEventListener(
+        "click",
+        callback
+    );
+
+    boton.addEventListener(
+        "touchend",
+        event => {
+            event.preventDefault();
+            callback();
+        },
+        { passive: false }
+    );
+}
+
+activarBoton(
+    "acercar",
+    () => {
+        hacerZoomEn(
+            W / 2,
+            H / 2,
+            1.25
+        );
+    }
+);
+
+activarBoton(
+    "alejar",
+    () => {
+        hacerZoomEn(
+            W / 2,
+            H / 2,
+            1 / 1.25
+        );
+    }
+);
+
+activarBoton(
+    "centrar",
+    () => {
+        zoom = 1;
+        offsetX = 0;
+        offsetY = 0;
+        actualizarTextoZoom();
+    }
+);
+
+/* =====================================================
+   ACTUALIZAR PORCENTAJE
+===================================================== */
+
+function actualizarTextoZoom() {
+
+    document.getElementById("zoomTexto").textContent =
+        Math.round(zoom * 100) + "%";
+}
+
+
+/* =====================================================
+   INTERACCIÓN TÁCTIL PARA TELÉFONOS
+===================================================== */
+
+function distanciaEntre(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function centroEntre(a, b) {
+    return {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2
+    };
+}
+
+function limitarMovimiento() {
+    /*
+        Evita que la galaxia desaparezca por completo
+        cuando se arrastra demasiado en un teléfono.
+    */
+    const limiteX =
+        Math.max(90, W * 0.65);
+
+    const limiteY =
+        Math.max(90, H * 0.65);
+
+    offsetX =
+        Math.max(-limiteX, Math.min(limiteX, offsetX));
+
+    offsetY =
+        Math.max(-limiteY, Math.min(limiteY, offsetY));
+}
+
+function hacerZoomEn(pantallaX, pantallaY, factor) {
+
+    const zoomAnterior = zoom;
+
+    const nuevoZoom = Math.max(
+        MIN_ZOOM,
+        Math.min(MAX_ZOOM, zoom * factor)
+    );
+
+    if (nuevoZoom === zoom) {
+        return;
+    }
+
+    /*
+        Conserva exactamente el punto tocado
+        mientras se hace zoom.
+    */
+    const mundoX =
+        (pantallaX - CX - offsetX) /
+        zoomAnterior;
+
+    const mundoY =
+        (pantallaY - CY - offsetY) /
+        zoomAnterior;
+
+    zoom = nuevoZoom;
+
+    offsetX =
+        pantallaX -
+        CX -
+        mundoX * zoom;
+
+    offsetY =
+        pantallaY -
+        CY -
+        mundoY * zoom;
+
+    limitarMovimiento();
+
+    actualizarTextoZoom();
+}
+
+/* Alias para no romper el código original. */
+const zoomEn = hacerZoomEn;
+
+function ocultarIndicacion() {
+    const ayuda =
+        document.querySelector(".indicacion");
+
+    if (ayuda) {
+        ayuda.style.opacity = "0";
+        setTimeout(() => {
+            ayuda.style.display = "none";
+        }, 700);
+    }
+}
+
+/* =====================================================
+   ZOOM CON RUEDA DEL MOUSE
+===================================================== */
+
+canvas.addEventListener("wheel", event => {
+
+    event.preventDefault();
+
+    const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12;
+
+    zoomEn(event.clientX, event.clientY, factor);
+
+}, { passive: false });
+
+/* =====================================================
+   ARRASTRAR GALAXIA
+===================================================== */
+
+canvas.addEventListener("pointerdown", event => {
+
+    if (
+        event.pointerType === "mouse" &&
+        event.button !== 0
+    ) {
+        return;
+    }
+
+    ocultarIndicacion();
+
+    pointers.set(
+        event.pointerId,
+        {
+            x: event.clientX,
+            y: event.clientY
+        }
+    );
+
+    try {
+        canvas.setPointerCapture(event.pointerId);
+    } catch (_) {}
+
+    /*
+        Doble toque = acercar exactamente donde se tocó.
+    */
+    const now = Date.now();
+
+    const distanciaDobleToque =
+        Math.hypot(
+            event.clientX - lastTapX,
+            event.clientY - lastTapY
+        );
+
+    if (
+        pointers.size === 1 &&
+        now - lastTapTime < 320 &&
+        distanciaDobleToque < 40
+    ) {
+        hacerZoomEn(
+            event.clientX,
+            event.clientY,
+            1.45
+        );
+    }
+
+    lastTapTime = now;
+    lastTapX = event.clientX;
+    lastTapY = event.clientY;
+
+    /*
+        Un dedo = desplazamiento.
+    */
+    if (pointers.size === 1) {
+
+        dragging = true;
+
+        lastX = event.clientX;
+        lastY = event.clientY;
+    }
+
+    /*
+        Dos dedos = pinch zoom.
+    */
+    if (pointers.size === 2) {
+
+        dragging = false;
+
+        const pts =
+            [...pointers.values()];
+
+        lastPinchDistance =
+            distanciaEntre(
+                pts[0],
+                pts[1]
+            );
+
+        const c =
+            centroEntre(
+                pts[0],
+                pts[1]
+            );
+
+        lastPinchCenterX = c.x;
+        lastPinchCenterY = c.y;
+    }
+});
+
+canvas.addEventListener("pointermove", event => {
+
+    if (!pointers.has(event.pointerId)) {
+        return;
+    }
+
+    pointers.set(
+        event.pointerId,
+        {
+            x: event.clientX,
+            y: event.clientY
+        }
+    );
+
+    /*
+        PINCH: acercar/alejar con dos dedos.
+    */
+    if (pointers.size === 2) {
+
+        const pts =
+            [...pointers.values()];
+
+        const nuevaDistancia =
+            distanciaEntre(
+                pts[0],
+                pts[1]
+            );
+
+        const c =
+            centroEntre(
+                pts[0],
+                pts[1]
+            );
+
+        if (lastPinchDistance > 0) {
+
+            const factor =
+                nuevaDistancia /
+                lastPinchDistance;
+
+            hacerZoomEn(
+                lastPinchCenterX,
+                lastPinchCenterY,
+                factor
+            );
+
+            /*
+                También permite mover la galaxia
+                mientras se hace pinch.
+            */
+            offsetX +=
+                c.x -
+                lastPinchCenterX;
+
+            offsetY +=
+                c.y -
+                lastPinchCenterY;
+
+            limitarMovimiento();
+        }
+
+        lastPinchDistance =
+            nuevaDistancia;
+
+        lastPinchCenterX = c.x;
+        lastPinchCenterY = c.y;
+
+        return;
+    }
+
+    /*
+        UN DEDO: arrastrar.
+    */
+    if (
+        pointers.size === 1 &&
+        dragging
+    ) {
+
+        const dx =
+            event.clientX -
+            lastX;
+
+        const dy =
+            event.clientY -
+            lastY;
+
+        offsetX += dx;
+        offsetY += dy;
+
+        lastX = event.clientX;
+        lastY = event.clientY;
+
+        limitarMovimiento();
+    }
+});
+
+function terminarPointer(event) {
+
+    pointers.delete(
+        event.pointerId
+    );
+
+    if (pointers.size === 0) {
+
+        dragging = false;
+
+        lastPinchDistance = 0;
+    }
+
+    if (pointers.size === 1) {
+
+        const p =
+            [...pointers.values()][0];
+
+        lastX = p.x;
+        lastY = p.y;
+
+        dragging = true;
+    }
+}
+
+canvas.addEventListener(
+    "pointerup",
+    terminarPointer
+);
+
+canvas.addEventListener(
+    "pointercancel",
+    terminarPointer
+);
+
+canvas.addEventListener(
+    "lostpointercapture",
+    terminarPointer
+);
+
+/*
+    Evita que el navegador interprete los
+    movimientos como navegación/zoom de página.
+*/
+document.addEventListener(
+    "touchmove",
+    event => {
+        event.preventDefault();
+    },
+    { passive: false }
+);
+
+/*
+    Evita gestos nativos de iOS/Safari.
+*/
+document.addEventListener(
+    "gesturestart",
+    event => event.preventDefault(),
+    { passive: false }
+);
+
+document.addEventListener(
+    "gesturechange",
+    event => event.preventDefault(),
+    { passive: false }
+);
+
+document.addEventListener(
+    "gestureend",
+    event => event.preventDefault(),
+    { passive: false }
+);
+
+/* =====================================================
+   PANTALLA COMPLETA
+===================================================== */
+
+activarBoton(
+    "pantalla",
+    async () => {
+
+        try {
+
+            if (
+                document.fullscreenElement
+            ) {
+
+                await document.exitFullscreen();
+
+                return;
+            }
+
+            if (
+                document.documentElement.requestFullscreen
+            ) {
+
+                await document.documentElement.requestFullscreen();
+
+                return;
+            }
+
+            /*
+                Algunos navegadores móviles
+                ya muestran la página a pantalla
+                completa desde el modo instalado.
+            */
+            alert(
+                "Para pantalla completa en este teléfono, agrega la página a la pantalla de inicio."
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Pantalla completa no disponible",
+                error
+            );
+        }
+    }
+);
+
+/* =====================================================
+   ANIMACIÓN PRINCIPAL
+===================================================== */
+
+function animar(time) {
+
+    /*
+        Fondo siempre ocupa toda la pantalla.
+    */
+
+    dibujarFondo();
+
+    /*
+        Todo lo siguiente se transforma con el zoom.
+    */
+
+    ctx.save();
+
+    aplicarTransformacion();
+
+    dibujarBrazos();
+
+    dibujarPolvo(time);
+
+    dibujarNucleo();
+
+    dibujarFlores(time);
+
+    ctx.restore();
+
+    requestAnimationFrame(animar);
+}
+
+actualizarTextoZoom();
+
+requestAnimationFrame(animar);
+
+</script>
+
+</body>
+</html>
